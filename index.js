@@ -4,6 +4,23 @@ const fs = require('fs')
 const len = fs.readFileSync('list_length.scm', 'utf8')
 const schemerFuncs = fs.readFileSync('little_schemer_functions.scm', 'utf8')
 
+const additionTest = '(+ 3 5)'
+
+function writeJS(array) {
+	result = ""
+	array = array[0][0]
+	for (var i=0; i<array.length; i++){
+		if(array[i] === '+') {
+			result += 'add('
+		} else {
+			result += `${array[i]}, `
+		}
+	}
+	result += ')'
+	result = result.replace(/, \)/, ')')
+	return result
+} 
+
 function walk(arr){
 	for(let i=0; i<arr.length; i++){
 		if(Array.isArray(arr[i])){
@@ -30,9 +47,11 @@ function tokenizer(str){
     str = str.replace(/^",|,"$/g, '')
     str = str.replace(/^/, '[')
     str = str.replace(/$/, ']')
+    
 	return walk(JSON.parse(str))
 }
 
-console.log(util.inspect(tokenizer(schemerFuncs), {depth: null}))
+//console.log(util.inspect(tokenizer(additionTest), {depth: null}))
+console.log(writeJS(tokenizer(additionTest)))
 
 
