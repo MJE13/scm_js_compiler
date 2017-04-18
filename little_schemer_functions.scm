@@ -1,5 +1,1 @@
-
-(define fact 
-	(lambda (x) 
-		(if (= x 1) 1 
-			(* x (fact (- x 1))))))
+(+ 6 (- (* 5 1) (/ 10 2)))
