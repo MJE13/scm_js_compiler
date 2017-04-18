@@ -2,9 +2,14 @@ const util = require('util')
 const fs = require('fs')
 
 const len = fs.readFileSync('list_length.scm', 'utf8')
-const schemerFuncs = fs.readFileSync('little_schemer_functions.scm', 'utf8')
 
-const additionTest = '(+ 3 5)'
+let factorial = `(define fact 
+	(lambda (x) 
+		(if (= x 1) 1 
+			(* x (fact (- x 1))))))`
+
+
+const additionTest = '(+ 3 5 2)'
 
 function writeJS(array) {
 	result = ""
@@ -38,7 +43,9 @@ function walk(arr){
 }
 
 function tokenizer(str){
-	str = str.replace(/\(/g, '",["')
+	str = str.replace(/".*"/g, match => match.replace(/ /g, '#$%'))
+	str = str.replace(/"/g, "@&@")
+	str = str.replace(/\(|'\(/g, '",["')
     str = str.replace(/\)/g, '"],"')
     str = str.replace(/\n/g, ' ')
     str = str.replace(/\s{2,}/g, ' ')
@@ -51,7 +58,20 @@ function tokenizer(str){
 	return walk(JSON.parse(str))
 }
 
-//console.log(util.inspect(tokenizer(additionTest), {depth: null}))
-console.log(writeJS(tokenizer(additionTest)))
+//console.log(util.inspect(tokenizer(factorial), {depth: null}))
+
+let res = writeJS(tokenizer(additionTest))
+console.log(res)
+
+const fdx = fs.openSync('library.js', 'r')
+let libSt = fs.readFileSync(fdx, 'utf8')
+let final = libSt + res
+console.log(eval(final))
+fs.closeSync(fdx)
+
+const fd = fs.openSync('output.js', 'w')
+fs.writeFileSync(fd, final)
+fs.closeSync(fd)
+
 
 
