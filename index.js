@@ -9,6 +9,11 @@ function walk(arr){
 			walk(arr[i])
 		} else {
 			arr[i] = arr[i].split(' ')
+			for (let j=0; j<arr[i].length; j++){
+				if (!Number.isNaN(parseFloat(arr[i][j]))){
+					arr[i][j] = parseFloat(arr[i][j])
+				}
+			}
 		}
 	}
 	return arr
