@@ -22,6 +22,8 @@ function tokenizer(str){
     str = str.replace(/,""|"",|," "/g, '')
     str = str.replace(/ "|" /g, '"')
     str = str.replace(/^",|,"$/g, '')
+    str = str.replace(/^/, '[')
+    str = str.replace(/$/, ']')
 
 	return walk(JSON.parse(str))
 }
