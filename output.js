@@ -13,4 +13,4 @@ function mult() {
 function divide(x, y) {
 	return x / y
 }
-add(3, 5, 2)
+mult(-1, 0.5)
