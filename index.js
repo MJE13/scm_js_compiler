@@ -8,7 +8,6 @@ let factorial = `(define fact
 		(if (= x 1) 1 
 			(* x (fact (- x 1))))))`
 
-
 const additionTest = '(+ 3 5 2)'
 
 function writeJS(array) {
@@ -58,7 +57,7 @@ function tokenizer(str){
 	return walk(JSON.parse(str))
 }
 
-//console.log(util.inspect(tokenizer(factorial), {depth: null}))
+console.log(util.inspect(tokenizer(factorial), {depth: null}))
 
 let res = writeJS(tokenizer(additionTest))
 console.log(res)
