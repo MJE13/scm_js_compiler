@@ -11,19 +11,68 @@ const equalTest = '(= 1 9)'
 
 const fact = `(define fact 
 	(lambda (x) 
-		(if (= x 1) 1 
-			(* x (fact (- x 1))))))`
+		(if (= x 1) 1 ( else (* x (fact (- x 1))))
+		))`
 
 let result = ''
 
+function isElLit(s) {
+	let isSL = true
+	switch (s) {
+		case '+':
+			isSL = false
+			break
+		case '-':
+			isSL = false
+			break
+		case '*':
+			isSL = false
+			break
+		case '/':
+			isSL = false
+			break
+		case '=':
+			isSL = false
+			break
+		case 'eq?':
+			isSL = false
+			break
+		case 'null?':
+			isSL = false
+			break
+		default:
+	}
+	return isSL
+}
+
+
+
 function writeJS(array) {
+	let inLitArr = false
+	let inIf = false	
 	for (var i=0; i<array.length; i++){
+		if (Array.isArray(array[i]) && isElLit(array[i][0])) {
+			result += '['
+			inLitArr = true
+		}
+		if (array[i] === 'if') {
+			result += 'schemeIf('
+			inIf = true
+			continue
+		}
 		if (Array.isArray(array[i])) {
 			writeJS(array[i])
 			if (i + 1 === array.length) {
+				if (inLitArr) {
+				console.log('LastLitEl', array[i])
+				//result += `${array[i]}`
+				result += '], '
+				} else {
 				result += '), '
-			}
+				}
+			} 
 		} else {
+			console.log('in switch', inLitArr)
 			switch(array[i]){
 				case '+':
 					result += 'add('
@@ -38,19 +87,47 @@ function writeJS(array) {
 					result += 'divide('
 					break
 				case '=':
-					result += `${array[i+1]} === ${array[i+2]}`
-					return result
+					result += 'equals('
+					break
+				case 'eq?':
+					result += 'equals('
+					break
+				case '>':
+					result += 'greater('
+					break
+				case '<':
+					result += 'less('
+					break
+				case '>=':
+					result += 'greaterOrEqual('
+					break
+				case '<=':
+					result += 'lessOrEqual('
+					break			
+				case 'null?':
+					result += 'isNull('
+					break
 				default:
 					if (i + 1 === array.length) {
-						result += `${array[i]}`
-						result += '), '
+						//console.log("getting here", inLitArr)
+						if (!inLitArr) {
+							result += `${array[i]}`
+							result += '), '
+						} else {
+							console.log('LastLitEl', array[i])
+							result += `${array[i]}`
+							result += '], '
+							} 
 					} else {
 						result += `${array[i]}, `
 					}
 			}
 		}
+		if (inIf && i === 3) {
+			result = result.replace(/\), $/, '')
+			result += ')'
+		}
 	}
-	//return result.replace(/, /, '') + ')'
 	return result
 } 
 
@@ -99,7 +176,7 @@ function tokenizer(str){
 	return arr
 }
 
-//console.log(util.inspect(tokenizer(len), {depth: null}))
+console.log(util.inspect(tokenizer(len), {depth: null}))
 
 let code = writeJS(tokenizer(len))
 code = code.replace(/, \)/g, ')')
@@ -115,7 +192,7 @@ const fd = fs.openSync('output.js', 'w')
 fs.writeFileSync(fd, final)
 fs.closeSync(fd)
 
-console.log(eval(final))
+//console.log(eval(final))
 
 
 

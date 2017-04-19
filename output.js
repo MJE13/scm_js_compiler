@@ -14,6 +14,38 @@ function divide(x, y) {
 	return x / y
 }
 
+function equals(x, y) {
+	return x === y
+}
+
+function greater(x, y) {
+	return x > y
+}
+
+function less(x, y) {
+	return x < y
+}
+
+function greaterOrEqual(x, y) {
+	return x >= y
+}
+
+function lessOrEqual(x, y) {
+	return x <= y
+}
+
+function isNull(x) {
+	return x === null
+}
+
+function schemeIf(bool, cbTrue, cbFalse) {
+	if (bool) {
+		return cbTrue
+	} else {
+		return cbFalse
+	}
+}
+
 // END LIBRARY
 
-add(6, subtract(mult(5, 1), divide(10, 2)))
+schemeIf(equals(4, 5), 3, [4, 3), ])
