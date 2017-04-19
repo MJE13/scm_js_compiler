@@ -13,4 +13,7 @@ function mult() {
 function divide(x, y) {
 	return x / y
 }
-mult(-1, 0.5)
+
+// END LIBRARY
+
+add(6, subtract(mult(5, 1), divide(10, 2)))

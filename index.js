@@ -16,67 +16,60 @@ const fact = `(define fact
 
 let result = ''
 
-function buildWalk(arr){
-	for(let i=0; i<arr.length; i++){
-		if(Array.isArray(arr[i])){
-			buildWalk(arr[i])
-		} else {
-			finalOutput += writeJS(arr[i])
-		}
-	}
-}
-
 function writeJS(array) {
-	console.log("input array", array[2])
-	if (Array.isArray(array[0][0])) {
-		array = array[0][0]
-	} else {
-		array = array[0]
-	}
-	console.log("THIS IS THE ARRAY", array)
 	for (var i=0; i<array.length; i++){
-		console.log("found array", array[i])
 		if (Array.isArray(array[i])) {
 			writeJS(array[i])
-		}
-		switch(array[i]){
-			case '+':
-				result += 'add('
-				break
-			case '-':
-				result += 'subtract('
-				break
-			case '*':
-				result += 'mult('
-				break
-			case '/':
-				result += 'divide('
-				break
-			case '=':
-				result += `${array[i+1]} === ${array[i+2]}`
-				return result
-			default:
-				result += `${array[i]}, `
-				break
+			if (i + 1 === array.length) {
+				result += '), '
+			}
+		} else {
+			switch(array[i]){
+				case '+':
+					result += 'add('
+					break
+				case '-':
+					result += 'subtract('
+					break
+				case '*':
+					result += 'mult('
+					break
+				case '/':
+					result += 'divide('
+					break
+				case '=':
+					result += `${array[i+1]} === ${array[i+2]}`
+					return result
+				default:
+					if (i + 1 === array.length) {
+						result += `${array[i]}`
+						result += '), '
+					} else {
+						result += `${array[i]}, `
+					}
+			}
 		}
 	}
-	result += ')'
-	result = result.replace(/, \)/, ')')
+	//return result.replace(/, /, '') + ')'
 	return result
 } 
 
 function walk(arr){
 	for(let i=0; i<arr.length; i++){
-		console.log("walk", arr[i])
 		if(Array.isArray(arr[i])){
 			walk(arr[i])
+			if (Array.isArray(arr[i][0]) && arr[i].length === 1) {
+				arr[i] = arr[i][0]
+			}
 		} else {
-			let insideArr = arr[i].split(' ')
-			
-			for (let j=0; j<arr[i].length; j++){
-				if (!Number.isNaN(parseFloat(arr[i][j]))){
-					arr[i][j] = parseFloat(arr[i][j])
+			if (/ /.test(arr[i])) {
+				let subArr = arr[i].split(' ')
+				let lenSR = subArr.length
+				arr[i] = subArr[0]
+				for (let j=1; j<lenSR; j++) {
+					arr.splice(i + j, 0, subArr[j])
 				}
+				i += lenSR - 1
 			}
 		}
 	}
@@ -95,28 +88,34 @@ function tokenizer(str){
     str = str.replace(/^",|,"$/g, '')
     str = str.replace(/^/, '[')
     str = str.replace(/$/, ']')
-    console.log("parsed string", util.inspect(JSON.parse(str), {depth: null}))
-	return walk(JSON.parse(str))
+    
+    let arr = JSON.parse(str)
+    if (Array.isArray(arr[0]) && arr.length === 1) {
+		arr = arr[0]
+	}
+	
+    arr = walk(arr)
+
+	return arr
 }
 
 //console.log(util.inspect(tokenizer(len), {depth: null}))
 
-//console.log(tokenizer(len))
-console.log(tokenizer(len))
-//console.log(result)
-
-/*let res = writeJS(tokenizer(multTest))
-console.log(res)
+let code = writeJS(tokenizer(len))
+code = code.replace(/, \)/g, ')')
+code = code.replace(/, $/, '')
+console.log(code)
 
 const fdx = fs.openSync('library.js', 'r')
-let libSt = fs.readFileSync(fdx, 'utf8')
-let final = libSt + res
-console.log(eval(final))
+let lib = fs.readFileSync(fdx, 'utf8')
+let final = lib + code
 fs.closeSync(fdx)
 
 const fd = fs.openSync('output.js', 'w')
 fs.writeFileSync(fd, final)
-fs.closeSync(fd)*/
+fs.closeSync(fd)
+
+console.log(eval(final))
 
 
 
