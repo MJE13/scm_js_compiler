@@ -53,8 +53,9 @@ function cond() {
 	}
 }
 
-function schemeLet(arr) {
-	
+function car(arr) {
+	console.log('hello', arr)
+	return arr[0]
 }
 
 // END LIBRARY

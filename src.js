@@ -53,10 +53,11 @@ function cond() {
 	}
 }
 
-function schemeLet(arr) {
-	
+function car(arr) {
+	console.log('hello', arr)
+	return arr[0]
 }
 
 // END LIBRARY
 
-cond([equals(3, 4), 0], [less(4, 4), 1], [greater(4, 1), 2])
+add(4, 5, mult(5, 4), 9, car([2, 3, 4], 8); 
