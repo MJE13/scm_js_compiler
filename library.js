@@ -38,11 +38,11 @@ function isNull(x) {
 	return x === null
 }
 
-function schemeIf(bool, cbTrue, cbFalse) {
+function schemeIf(bool, retTrue, retFalse) {
 	if (bool) {
-		return cbTrue
+		return retTrue
 	} else {
-		return cbFalse
+		return retFalse
 	}
 }
 

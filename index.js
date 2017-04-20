@@ -1,79 +1,28 @@
 const util = require('util')
 const fs = require('fs')
 
-const len = fs.readFileSync('little_schemer_functions.scm', 'utf8')
-
-const additionTest = '(+ 3 5 2)'
-const subractionTest = '(- 2 3)'
-const multTest = '(* -1 .5)'
-const divTest = '(/ 3 2)'
-const equalTest = '(= 1 9)'
-
-const fact = `(define fact 
-	(lambda (x) 
-		(if (= x 1) 1 ( else (* x (fact (- x 1))))
-		))`
+const scheme = fs.readFileSync('src.scm', 'utf8')
 
 let result = ''
 
-function isElLit(s) {
-	let isSL = true
-	switch (s) {
-		case '+':
-			isSL = false
-			break
-		case '-':
-			isSL = false
-			break
-		case '*':
-			isSL = false
-			break
-		case '/':
-			isSL = false
-			break
-		case '=':
-			isSL = false
-			break
-		case 'eq?':
-			isSL = false
-			break
-		case 'null?':
-			isSL = false
-			break
-		default:
-	}
-	return isSL
-}
-
-
-
 function writeJS(array) {
-	let inLitArr = false
-	let inIf = false	
-	for (var i=0; i<array.length; i++){
-		if (Array.isArray(array[i]) && isElLit(array[i][0])) {
-			result += '['
-			inLitArr = true
-		}
-		if (array[i] === 'if') {
-			result += 'schemeIf('
-			inIf = true
-			continue
-		}
+	let isLitArr = false
+	for (var i=0; i<array.length; i++) {
 		if (Array.isArray(array[i])) {
+			if (i === 0) {
+				result += '['
+				isLitArr = true
+			}
 			writeJS(array[i])
 			if (i + 1 === array.length) {
-				if (inLitArr) {
-				console.log('LastLitEl', array[i])
-				//result += `${array[i]}`
-				result += '], '
+				if (isLitArr) {
+					result += '], '
 				} else {
-				result += '), '
+					result += '), '
 				}
-			} 
+			}
 		} else {
-			console.log('in switch', inLitArr)
-			switch(array[i]){
+			switch (array[i]) {
 				case '+':
 					result += 'add('
 					break
@@ -107,34 +56,32 @@ function writeJS(array) {
 				case 'null?':
 					result += 'isNull('
 					break
+				case 'if':
+					result += 'schemeIf('
+					break
 				default:
 					if (i + 1 === array.length) {
-						//console.log("getting here", inLitArr)
-						if (!inLitArr) {
-							result += `${array[i]}`
-							result += '), '
-						} else {
-							console.log('LastLitEl', array[i])
-							result += `${array[i]}`
+						result += `${array[i]}`
+						if (isLitArr) {
 							result += '], '
-							} 
+						} else {
+							result += '), '
+						}
+					} else if (i === 0) {
+						result += `[${array[i]}, `
+						isLitArr = true
 					} else {
 						result += `${array[i]}, `
 					}
 			}
 		}
-		if (inIf && i === 3) {
-			result = result.replace(/\), $/, '')
-			result += ')'
-		}
 	}
-	return result
 } 
 
-function walk(arr){
+function tokenize(arr) {
 	for(let i=0; i<arr.length; i++){
 		if(Array.isArray(arr[i])){
-			walk(arr[i])
+			tokenize(arr[i])
 			if (Array.isArray(arr[i][0]) && arr[i].length === 1) {
 				arr[i] = arr[i][0]
 			}
@@ -153,7 +100,7 @@ function walk(arr){
 	return arr
 }
 
-function tokenizer(str){
+function makeTree(str) {
 	str = str.replace(/".*"/g, match => match.replace(/ /g, '#$%'))
 	str = str.replace(/"/g, "@&@")
 	str = str.replace(/\(|'\(/g, '",["')
@@ -171,24 +118,30 @@ function tokenizer(str){
 		arr = arr[0]
 	}
 	
-    arr = walk(arr)
+    arr = tokenize(arr)
 
 	return arr
 }
 
-console.log(util.inspect(tokenizer(len), {depth: null}))
+function compile(str) {
+	writeJS(makeTree(str))
+	result = result.replace(/, \)/g, ')')
+	result = result.replace(/, \]/g, ']')
+	result = result.replace(/, $/, '')
+	return result
+}
 
-let code = writeJS(tokenizer(len))
-code = code.replace(/, \)/g, ')')
-code = code.replace(/, $/, '')
-console.log(code)
+//console.log(util.inspect(makeTree(scheme), {depth: null}))
+
+compile(scheme)
+console.log(result)
 
 const fdx = fs.openSync('library.js', 'r')
 let lib = fs.readFileSync(fdx, 'utf8')
-let final = lib + code
+let final = lib + result
 fs.closeSync(fdx)
 
-const fd = fs.openSync('output.js', 'w')
+const fd = fs.openSync('src.js', 'w')
 fs.writeFileSync(fd, final)
 fs.closeSync(fd)
 
