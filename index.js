@@ -62,6 +62,9 @@ function writeJS(array) {
 				case 'cond':
 					result += 'cond('
 					break
+				case 'let':
+					result += 'schemeLet('
+					break
 				default:
 					if (i + 1 === array.length) {
 						result += `${array[i]}`

@@ -53,5 +53,9 @@ function cond() {
 	}
 }
 
+function schemeLet(arr) {
+	
+}
+
 // END LIBRARY
 

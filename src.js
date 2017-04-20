@@ -53,6 +53,10 @@ function cond() {
 	}
 }
 
+function schemeLet(arr) {
+	
+}
+
 // END LIBRARY
 
 cond([equals(3, 4), 0], [less(4, 4), 1], [greater(4, 1), 2])
