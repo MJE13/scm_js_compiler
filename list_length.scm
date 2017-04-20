@@ -1,6 +1,6 @@
 (define listLength
 	(lambda (passedlist)
-		(let ((i 1) (str "i am the very model of a modern major general"))
+		(let ((i 1))
 			(define listLengthLoop
 				(lambda (l)
 					(cond

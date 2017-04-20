@@ -59,6 +59,9 @@ function writeJS(array) {
 				case 'if':
 					result += 'schemeIf('
 					break
+				case 'cond':
+					result += 'cond('
+					break
 				default:
 					if (i + 1 === array.length) {
 						result += `${array[i]}`
@@ -76,24 +79,25 @@ function writeJS(array) {
 			}
 		}
 	}
-} 
+}
 
 function tokenize(arr) {
-	for(let i=0; i<arr.length; i++){
+	for (let i=0; i<arr.length; i++) {
 		if(Array.isArray(arr[i])){
 			tokenize(arr[i])
 			if (Array.isArray(arr[i][0]) && arr[i].length === 1) {
-				arr[i] = arr[i][0]
+				if (!(i === 1 && arr[i-1] === 'let')) {
+					arr[i] = arr[i][0]
+				}
 			}
 		} else {
 			if (/ /.test(arr[i])) {
 				let subArr = arr[i].split(' ')
-				let lenSR = subArr.length
 				arr[i] = subArr[0]
-				for (let j=1; j<lenSR; j++) {
+				for (let j=1; j<subArr.length; j++) {
 					arr.splice(i + j, 0, subArr[j])
 				}
-				i += lenSR - 1
+				i += subArr.length - 1
 			}
 		}
 	}
@@ -131,7 +135,7 @@ function compile(str) {
 	return result
 }
 
-//console.log(util.inspect(makeTree(scheme), {depth: null}))
+console.log(util.inspect(makeTree(scheme), {depth: null}))
 
 compile(scheme)
 console.log(result)
@@ -145,7 +149,7 @@ const fd = fs.openSync('src.js', 'w')
 fs.writeFileSync(fd, final)
 fs.closeSync(fd)
 
-//console.log(eval(final))
+console.log(eval(final))
 
 
 

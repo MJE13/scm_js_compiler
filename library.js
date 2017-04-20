@@ -46,5 +46,12 @@ function schemeIf(bool, retTrue, retFalse) {
 	}
 }
 
+function cond() {
+	let args = Array.prototype.slice.call(arguments)
+	for (let i=0; i< args.length; i++) {
+		if (args[i][0]) return args[i][1]
+	}
+}
+
 // END LIBRARY
 

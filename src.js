@@ -46,6 +46,13 @@ function schemeIf(bool, retTrue, retFalse) {
 	}
 }
 
+function cond() {
+	let args = Array.prototype.slice.call(arguments)
+	for (let i=0; i< args.length; i++) {
+		if (args[i][0]) return args[i][1]
+	}
+}
+
 // END LIBRARY
 
-[[4, 19], [1, 2], 3, [4, [5, 6], 7]]
+cond([equals(3, 4), 0], [less(4, 4), 1], [greater(4, 1), 2])
