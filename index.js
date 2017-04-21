@@ -4,11 +4,8 @@ const fs = require('fs')
 const scheme = fs.readFileSync('src.scm', 'utf8')
 
 let result = ''
-let depth = 0
 
 function writeJS(array, funcOrArrContainer) {
-	depth++
-	
 	let isLitArr = false
 	let isFuncArgs = false
 	for (var i=0; i<array.length; i++) {
@@ -68,7 +65,7 @@ function writeJS(array, funcOrArrContainer) {
 				case '<=':
 					result += 'lessOrEqual('
 					isFuncArgs = true
-					break			
+					break
 				case 'null?':
 					result += 'isNull('
 					isFuncArgs = true
@@ -90,12 +87,10 @@ function writeJS(array, funcOrArrContainer) {
 					break
 				default:
 					if (i + 1 === array.length) {
-						console.log('inside default', array[i], isFuncArgs, depth)
 						result += `${array[i]}`
 						if (isLitArr) {
 							result += '], '
 						} else if (funcOrArrContainer) {
-							console.log('inside default', array[i], isFuncArgs, depth)
 							result += '), '
 						} else {
 							result += '); '
@@ -109,8 +104,6 @@ function writeJS(array, funcOrArrContainer) {
 			}
 		}
 	}
-	
-	depth--
 }
 
 function tokenize(arr) {
@@ -148,12 +141,12 @@ function makeTree(str) {
     str = str.replace(/^",|,"$/g, '')
     str = str.replace(/^/, '[')
     str = str.replace(/$/, ']')
-    
+
     let arr = JSON.parse(str)
     if (Array.isArray(arr[0]) && arr.length === 1) {
 		arr = arr[0]
 	}
-	
+
     arr = tokenize(arr)
 
 	return arr
@@ -164,7 +157,6 @@ function countParens(match) {
 
 	let parCount = 0
 	for (let i=9; i<match.length; i++) {
-		
 		if (match[i] === '(') {
 			parCount++
 		} else if (match[i] === ')') {
@@ -177,9 +169,9 @@ function countParens(match) {
 	}
 
 	match = match.join('')
-	match = match.replace(/schemeLet\(\[\[(.), (.)\]\],/, ' let $1 = $2; ')
+	match = match.replace(/schemeLet\(\[\[(.), (.)\]\],/, 'let $1 = $2;')
 	match = match.replace(/schemeLet.*$/, countParens)
-	
+
 	return match
 }
 
@@ -189,10 +181,7 @@ function compile(str) {
 	result = result.replace(/, \]/g, ']')
 	result = result.replace(/, $/, '')
 	result = result.replace(/schemeLet.*$/, countParens)
-	return result
 }
-
-//console.log(util.inspect(makeTree(scheme), {depth: null}))
 
 compile(scheme)
 console.log(result)
@@ -206,7 +195,4 @@ const fd = fs.openSync('src.js', 'w')
 fs.writeFileSync(fd, final)
 fs.closeSync(fd)
 
-console.log(eval(final))
-
-
-
+//console.log(eval(final))

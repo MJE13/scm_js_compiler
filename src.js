@@ -54,10 +54,9 @@ function cond() {
 }
 
 function car(arr) {
-	console.log('hello', arr)
 	return arr[0]
 }
 
 // END LIBRARY
 
-add(4, 5, mult(5, 4), 9, car([2, 3, 4], 8); 
+[1, [2, [3, [4, [5, [6, 7)]]]]]]

@@ -54,7 +54,6 @@ function cond() {
 }
 
 function car(arr) {
-	console.log('hello', arr)
 	return arr[0]
 }
 
