@@ -81,8 +81,20 @@ function writeJS(array, funcOrArrContainer) {
 					result += 'cond('
 					isFuncArgs = true
 					break
+				case 'else':
+					result += 'condElse('
+					isFuncArgs = true
+					break
 				case 'car':
 					result += 'car('
+					isFuncArgs = true
+					break
+				case 'cdr':
+					result += 'cdr('
+					isFuncArgs = true
+					break
+				case 'cons':
+					result += 'cons('
 					isFuncArgs = true
 					break
 				case 'let':
@@ -192,13 +204,13 @@ function compile(str) {
 compile(scheme)
 console.log(result)
 
-/*const fdx = fs.openSync('library.js', 'r')
+const fdx = fs.openSync('library.js', 'r')
 let lib = fs.readFileSync(fdx, 'utf8')
 let final = lib + result
 fs.closeSync(fdx)
 
 const fd = fs.openSync('src.js', 'w')
 fs.writeFileSync(fd, final)
-fs.closeSync(fd)*/
+fs.closeSync(fd)
 
-//console.log(eval(final))
+console.log(eval(final))

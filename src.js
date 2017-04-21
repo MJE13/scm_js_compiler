@@ -53,10 +53,23 @@ function cond() {
 	}
 }
 
+function condElse(arg) {
+	return [true, arg]
+}
+
 function car(arr) {
 	return arr[0]
 }
 
-// END LIBRARY
+function cdr(arr) {
+	arr.shift()
+	return arr
+}
 
-[1, [2, [3, [4, [5, [6, 7)]]]]]]
+function cons(add, list) {
+	list.unshift(add)
+	return list
+}
+
+// END LIBRARY
+cond([greater(4, 6), [1, 2]], [greaterOrEqual(2, 9), 789], condElse(schemeIf(equals(8, 9), 6, 7))); 

@@ -53,9 +53,22 @@ function cond() {
 	}
 }
 
+function condElse(arg) {
+	return [true, arg]
+}
+
 function car(arr) {
 	return arr[0]
 }
 
-// END LIBRARY
+function cdr(arr) {
+	arr.shift()
+	return arr
+}
 
+function cons(add, list) {
+	list.unshift(add)
+	return list
+}
+
+// END LIBRARY
