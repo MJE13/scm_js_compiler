@@ -38,17 +38,23 @@ function isNull(x) {
 	return x === null
 }
 
-function schemeIf(bool, retTrue, retFalse) {
+function schemeIf(bool, exp1, exp2) {
 	if (bool) {
-		return retTrue
+		return exp1
 	} else {
-		return retFalse
+		return exp2
 	}
 }
 
 function cond() {
 	let args = Array.prototype.slice.call(arguments)
 	for (let i=0; i< args.length; i++) {
+		if (args[i] === true) return args[i+1]
+		if (args[i] === false) {
+			i++
+			continue
+		}
+		if (args[i].length === 1) return args[i][0]
 		if (args[i][0]) return args[i][1]
 	}
 }
@@ -71,5 +77,13 @@ function cons(add, list) {
 	return list
 }
 
+function schemeAnd(){
+	let args = Array.prototype.slice.call(arguments)
+	if (args.length === 0) return true
+	if (args.length === 1) return args[0]
+	if (args[0] !== false && args[1] !== false) return args[1]
+	return false
+}
+
 // END LIBRARY
-cond([greater(4, 6), [1, 2]], [greaterOrEqual(2, 9), 789], condElse(schemeIf(equals(8, 9), 6, 7))); 
+schemeAnd(1, [a, b]); 

@@ -100,6 +100,10 @@ function writeJS(array, funcOrArrContainer) {
 				case 'let':
 					result += 'schemeLet('
 					break
+				case 'and':
+					result += 'schemeAnd('
+					isFuncArgs = true
+					break
 				default:
 					if (i === 0) {
 						result += '['
@@ -159,7 +163,7 @@ function makeTree(str) {
     str = str.replace(/^",|,"$/g, '')
     str = str.replace(/^/, '[')
     str = str.replace(/$/, ']')
-
+	console.log("beginning string", str)
     let arr = JSON.parse(str)
     if (Array.isArray(arr[0]) && arr.length === 1) {
 		arr = arr[0]
@@ -170,11 +174,13 @@ function makeTree(str) {
 	return arr
 }
 
+let cpArgs = { numToParen: null, innerRegEx: null, replaceStr: null, outerRegEx: null }
 function countParens(match) {
+	console.log(cpArgs)
 	match = match.split('')
 
 	let parCount = 0
-	for (let i=9; i<match.length; i++) {
+	for (let i=cpArgs.numToParen; i<match.length; i++) {
 		if (match[i] === '(') {
 			parCount++
 		} else if (match[i] === ')') {
@@ -187,8 +193,8 @@ function countParens(match) {
 	}
 
 	match = match.join('')
-	match = match.replace(/schemeLet\(\[\[(.), (.)\]\],/, 'let $1 = $2;')
-	match = match.replace(/schemeLet.*$/, countParens)
+	match = match.replace(cpArgs.innerRegEx, cpArgs.replaceStr)
+	match = match.replace(cpArgs.outerRegEx, countParens)
 
 	return match
 }
@@ -198,7 +204,15 @@ function compile(str) {
 	result = result.replace(/, \)/g, ')')
 	result = result.replace(/, \]/g, ']')
 	result = result.replace(/, $/, '')
-	result = result.replace(/schemeLet.*$/, countParens)
+
+	cpArgs.numToParen = 9
+	cpArgs.innerRegEx = /schemeLet\(\[\[(.{1,30}), (.{1,30})\]\],/
+	cpArgs.replaceStr = 'let $1 = $2;'
+	cpArgs.outerRegEx = /schemeLet.*$/
+
+	result = result.replace(cpArgs.outerRegEx, countParens)
+	result = result.replace(/#t/g, 'true')
+	result = result.replace(/#f/g, 'false')
 }
 
 compile(scheme)
