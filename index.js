@@ -1,11 +1,14 @@
-const util = require('util')
 const fs = require('fs')
 
 const scheme = fs.readFileSync('src.scm', 'utf8')
 
 let result = ''
+let writeDepth = 0
 
 function writeJS(array, funcOrArrContainer) {
+	writeDepth++
+
+	debugger;
 	let isLitArr = false
 	let isFuncArgs = false
 	for (var i=0; i<array.length; i++) {
@@ -86,6 +89,10 @@ function writeJS(array, funcOrArrContainer) {
 					result += 'schemeLet('
 					break
 				default:
+					if (i === 0) {
+						result += '['
+						isLitArr = true
+					}
 					if (i + 1 === array.length) {
 						result += `${array[i]}`
 						if (isLitArr) {
@@ -95,15 +102,14 @@ function writeJS(array, funcOrArrContainer) {
 						} else {
 							result += '); '
 						}
-					} else if (i === 0) {
-						result += `[${array[i]}, `
-						isLitArr = true
 					} else {
 						result += `${array[i]}, `
 					}
 			}
 		}
 	}
+
+	writeDepth--
 }
 
 function tokenize(arr) {
@@ -186,13 +192,13 @@ function compile(str) {
 compile(scheme)
 console.log(result)
 
-const fdx = fs.openSync('library.js', 'r')
+/*const fdx = fs.openSync('library.js', 'r')
 let lib = fs.readFileSync(fdx, 'utf8')
 let final = lib + result
 fs.closeSync(fdx)
 
 const fd = fs.openSync('src.js', 'w')
 fs.writeFileSync(fd, final)
-fs.closeSync(fd)
+fs.closeSync(fd)*/
 
 //console.log(eval(final))
