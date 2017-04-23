@@ -26,82 +26,86 @@ function writeJS(array, funcOrArrContainer) {
 		} else {
 			switch (array[i]) {
 				case '+':
-					result += 'add('
+					result += '_scmjs_8tn7k2_add('
 					isFuncArgs = true
 					break
 				case '-':
-					result += 'subtract('
+					result += '_scmjs_8tn7k2_subtract('
 					isFuncArgs = true
 					break
 				case '*':
-					result += 'mult('
+					result += '_scmjs_8tn7k2_mult('
 					isFuncArgs = true
 					break
 				case '/':
-					result += 'divide('
+					result += '_scmjs_8tn7k2_divide('
 					isFuncArgs = true
 					break
 				case '=':
-					result += 'equals('
+					result += '_scmjs_8tn7k2_equals('
 					isFuncArgs = true
 					break
 				case 'eq?':
-					result += 'equals('
+					result += '_scmjs_8tn7k2_equals('
 					isFuncArgs = true
 					break
 				case '>':
-					result += 'greater('
+					result += '_scmjs_8tn7k2_greater('
 					isFuncArgs = true
 					break
 				case '<':
-					result += 'less('
+					result += '_scmjs_8tn7k2_less('
 					isFuncArgs = true
 					break
 				case '>=':
-					result += 'greaterOrEqual('
+					result += '_scmjs_8tn7k2_greaterOrEqual('
 					isFuncArgs = true
 					break
 				case '<=':
-					result += 'lessOrEqual('
+					result += '_scmjs_8tn7k2_lessOrEqual('
 					isFuncArgs = true
 					break
 				case 'null?':
-					result += 'isNull('
+					result += '_scmjs_8tn7k2_isNull('
 					isFuncArgs = true
 					break
 				case 'if':
-					result += 'schemeIf('
+					result += '_scmjs_8tn7k2_if('
 					isFuncArgs = true
 					break
 				case 'cond':
-					result += 'cond('
+					result += '_scmjs_8tn7k2_cond('
 					isFuncArgs = true
 					break
 				case 'else':
-					result += 'condElse('
+					result += '_scmjs_8tn7k2_else('
 					isFuncArgs = true
 					break
 				case 'car':
-					result += 'car('
+					result += '_scmjs_8tn7k2_car('
 					isFuncArgs = true
 					break
 				case 'cdr':
-					result += 'cdr('
+					result += '_scmjs_8tn7k2_cdr('
 					isFuncArgs = true
 					break
 				case 'cons':
-					result += 'cons('
+					result += '_scmjs_8tn7k2_cons('
 					isFuncArgs = true
 					break
 				case 'let':
-					result += 'schemeLet('
+					result += '_scmjs_8tn7k2_let('
 					break
 				case 'and':
-					result += 'schemeAnd('
+					result += '_scmjs_8tn7k2_and('
 					isFuncArgs = true
 					break
 				case 'or':
-					result += 'schemeOr('
+					result += '_scmjs_8tn7k2_or('
+					isFuncArgs = true
+					break
+				case 'set!':
+					result += '_scmjs_8tn7k2_set('
 					isFuncArgs = true
 					break
 				default:
@@ -119,7 +123,11 @@ function writeJS(array, funcOrArrContainer) {
 							result += '); '
 						}
 					} else {
-						result += `${array[i]}, `
+						if (i === 1 && array[0] === 'set!') {
+							result += `'${array[i]}', `
+						} else {
+							result += `${array[i]}, `
+						}
 					}
 			}
 		}
@@ -150,24 +158,22 @@ function tokenize(arr) {
 }
 
 function makeTree(str) {
-	str = str.replace(/".*"/g, match => match.replace(/ /g, '#$%'))
-	str = str.replace(/"/g, "@&@")
+	str = '(let ((_scmjs_8tn7k2_globalScope 0)) ' + str + ')'
+	str = str.replace(/".*?"/g, match => match.replace(/ /g, '#$%&!?@'))
+	str = str.replace(/"/g, '@?&@%&!')
 	str = str.replace(/\(|'\(/g, '",["')
-    str = str.replace(/\)/g, '"],"')
-    str = str.replace(/\n/g, ' ')
-    str = str.replace(/\s{2,}/g, ' ')
-    str = str.replace(/,""|"",|," "/g, '')
-    str = str.replace(/ "|" /g, '"')
-    str = str.replace(/^",|,"$/g, '')
-    str = str.replace(/^/, '[')
-    str = str.replace(/$/, ']')
+	str = str.replace(/\)/g, '"],"')
+	str = str.replace(/\n/g, ' ')
+	str = str.replace(/\s{2,}/g, ' ')
+	str = str.replace(/,""|"",|," "/g, '')
+	str = str.replace(/ "|" /g, '"')
+	str = str.replace(/^",|,"$/g, '')
+	str = str.replace(/^/, '[')
+	str = str.replace(/$/, ']')
 
-    let arr = JSON.parse(str)
-    if (Array.isArray(arr[0]) && arr.length === 1) {
-		arr = arr[0]
-	}
-
-    arr = tokenize(arr)
+	let arr = JSON.parse(str)
+	arr = arr[0]
+	arr = tokenize(arr)
 
 	return arr
 }
@@ -227,10 +233,10 @@ function compile(str) {
 	result = result.replace(/, \]/g, ']')
 	result = result.replace(/, $/, '')
 
-	cpArgs.numToParen = 9
-	cpArgs.innerRegEx = /schemeLet\(\[(.*)$/
+	cpArgs.numToParen = 17
+	cpArgs.innerRegEx = /_scmjs_8tn7k2_let\(\[(.*)$/
 	cpArgs.replaceStr = replaceLetStr
-	cpArgs.outerRegEx = /schemeLet.*$/
+	cpArgs.outerRegEx = /_scmjs_8tn7k2_let.*$/
 	result = result.replace(cpArgs.outerRegEx, countParens)
 
 	result = result.replace(/#t/g, 'true')
