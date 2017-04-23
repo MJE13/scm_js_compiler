@@ -1,1 +1,5 @@
-(and 1 (a b))
+(let ((a 1) (b 2))
+	(let ((x 3) (y 4))
+		(and a y)
+	)
+)

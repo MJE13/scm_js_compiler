@@ -86,4 +86,4 @@ function schemeAnd(){
 }
 
 // END LIBRARY
-schemeAnd(1, [a, b]); 
+let a = 1; let b = 2; let x = 3; let y = 4; schemeAnd(a, y); 

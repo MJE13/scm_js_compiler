@@ -8,7 +8,6 @@ let writeDepth = 0
 function writeJS(array, funcOrArrContainer) {
 	writeDepth++
 
-	debugger;
 	let isLitArr = false
 	let isFuncArgs = false
 	for (var i=0; i<array.length; i++) {
@@ -163,7 +162,7 @@ function makeTree(str) {
     str = str.replace(/^",|,"$/g, '')
     str = str.replace(/^/, '[')
     str = str.replace(/$/, ']')
-	console.log("beginning string", str)
+
     let arr = JSON.parse(str)
     if (Array.isArray(arr[0]) && arr.length === 1) {
 		arr = arr[0]
@@ -174,9 +173,33 @@ function makeTree(str) {
 	return arr
 }
 
+function replaceLetStr(match, inner) {
+	let bracketCount = 0
+	let i
+
+	for (i=0; i<inner.length; i++) {
+		if (inner.charAt(i) === '[') {
+			bracketCount++
+		} else if (inner.charAt(i) === ']') {
+			bracketCount--
+		}
+		if (bracketCount === -1) break
+	}
+
+	inner = inner.replace(inner.substring(0, i), (fullMatch) => {
+		return fullMatch.replace(/\[(\w{1,30}), ([^\]]{1,500})\](,|)/g, (full, key, val) => {
+			return `let ${key} = ${val};`
+		})
+	})
+	inner = inner.replace(/\],/, '')
+
+	return inner
+}
+
 let cpArgs = { numToParen: null, innerRegEx: null, replaceStr: null, outerRegEx: null }
-function countParens(match) {
-	console.log(cpArgs)
+function countParens() {
+	let args = Array.prototype.slice.call(arguments)
+	match = args[0]
 	match = match.split('')
 
 	let parCount = 0
@@ -206,11 +229,11 @@ function compile(str) {
 	result = result.replace(/, $/, '')
 
 	cpArgs.numToParen = 9
-	cpArgs.innerRegEx = /schemeLet\(\[\[(.{1,30}), (.{1,30})\]\],/
-	cpArgs.replaceStr = 'let $1 = $2;'
+	cpArgs.innerRegEx = /schemeLet\(\[(.*)$/
+	cpArgs.replaceStr = replaceLetStr
 	cpArgs.outerRegEx = /schemeLet.*$/
-
 	result = result.replace(cpArgs.outerRegEx, countParens)
+
 	result = result.replace(/#t/g, 'true')
 	result = result.replace(/#f/g, 'false')
 }
