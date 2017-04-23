@@ -105,5 +105,6 @@ function _scmjs_set(varname, val) {
 	return `${varname} = ${val};`
 }
 
+
 // END LIBRARY
-(()=>{ let _scmjs_globalScope = 0; return (()=>{ let r = 10; return _scmjs_add(4, 9); })(); })(); 
+replaceLetStr

@@ -9,6 +9,7 @@ function writeJS(array, funcOrArrContainer) {
 	let isFuncArgs = false
 	let isLetArg = false
 	for (let i=0; i<array.length; i++) {
+		debugger;
 		if (Array.isArray(array[i])) {
 			if (i === 0) {
 				result += '['
@@ -20,6 +21,7 @@ function writeJS(array, funcOrArrContainer) {
 				}
 			}
 			writeJS(array[i], isFuncArgs || isLitArr)
+			debugger;
 			if (i + 1 === array.length) {
 				if (isLitArr) {
 					result += '], '
@@ -115,9 +117,17 @@ function writeJS(array, funcOrArrContainer) {
 					result += '_scmjs_set('
 					isFuncArgs = true
 					break
+				case 'lambda':
+					result += '_schemeLambda('
+					//isFuncArgs = true
+					break
+				/*case 'define':
+					result += 'var '
+					break*/
 				default:
 					if (i === 0) {
 						result += '['
+						isFuncArgs = true
 						isLitArr = true
 					}
 					if (i + 1 === array.length) {
@@ -204,7 +214,6 @@ function replaceLetStr(match, inner) {
 
 	inner = inner.replace(inner.substring(0, i), (fullMatch) => {
 		return '(()=>{ ' + fullMatch.replace(/\[(\w{1,30}), ([^\]]{1,500})\](,|)/g, (full, key, val) => {
-		//return fullMatch.replace(/\[(\w{1,30}), ([^\]]{1,500})\](,|)/g, (full, key, val) => {
 			return `let ${key} = ${val};`
 		})
 	})
@@ -214,6 +223,7 @@ function replaceLetStr(match, inner) {
 }
 
 let cpArgs = { numToParen: null, innerRegEx: null, replaceStr: null, outerRegEx: null }
+
 function countParens() {
 	let args = Array.prototype.slice.call(arguments)
 	match = args[0]
@@ -229,8 +239,6 @@ function countParens() {
 			parCount--
 		}
 		if (parCount === 0) {
-			//match.splice(i, 1)
-			//i--
 			match[i] = '})()'
 			break
 		}
@@ -251,8 +259,14 @@ function compile(str) {
 
 	cpArgs.numToParen = 10
 	cpArgs.innerRegEx = /_scmjs_let\(\[(.*)$/
-	cpArgs.replaceStr = replaceLetStr
+	cpArgs.replaceStr = 'replaceLetStr'
 	cpArgs.outerRegEx = /_scmjs_let.*$/
+	result = result.replace(cpArgs.outerRegEx, countParens)
+
+	cpArgs.numToParen = 12
+	cpArgs.innerRegEx = /_schemeLambda\(\[(.*)$/
+	cpArgs.replaceStr = 'function() {'
+	cpArgs.outerRegEx = /_schemeLambda.*$/
 	result = result.replace(cpArgs.outerRegEx, countParens)
 
 	result = result.replace(/#t/g, 'true')
