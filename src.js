@@ -77,13 +77,29 @@ function cons(add, list) {
 	return list
 }
 
-function schemeAnd(){
+function schemeAnd() {
 	let args = Array.prototype.slice.call(arguments)
 	if (args.length === 0) return true
 	if (args.length === 1) return args[0]
-	if (args[0] !== false && args[1] !== false) return args[1]
+	let i
+	for (i=0; i<args.length; i++) {
+		if (args[i] !== false) {
+			continue
+		} else {
+			return false
+		}
+	}
+	return args[i-1]
+}
+
+function schemeOr() {
+	let args = Array.prototype.slice.call(arguments)
+	if (args.length === 0) return false
+	for (let i=0; i<args.length; i++) {
+		if (args[i] !== false) return args[i]
+	}
 	return false
 }
 
 // END LIBRARY
-let a = 1; let b = 2; let x = 3; let y = 4; schemeAnd(a, y); 
+let m = 13; let n = 15; let a = 1; let b = 2; let x = 3; let y = 4; schemeOr(false, equals(4, 5), less(90, 4), mult(m, y), greaterOrEqual(78, car([345, 987, 486]))); 

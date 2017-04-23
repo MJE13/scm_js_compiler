@@ -3,11 +3,8 @@ const fs = require('fs')
 const scheme = fs.readFileSync('src.scm', 'utf8')
 
 let result = ''
-let writeDepth = 0
 
 function writeJS(array, funcOrArrContainer) {
-	writeDepth++
-
 	let isLitArr = false
 	let isFuncArgs = false
 	for (var i=0; i<array.length; i++) {
@@ -103,6 +100,10 @@ function writeJS(array, funcOrArrContainer) {
 					result += 'schemeAnd('
 					isFuncArgs = true
 					break
+				case 'or':
+					result += 'schemeOr('
+					isFuncArgs = true
+					break
 				default:
 					if (i === 0) {
 						result += '['
@@ -123,8 +124,6 @@ function writeJS(array, funcOrArrContainer) {
 			}
 		}
 	}
-
-	writeDepth--
 }
 
 function tokenize(arr) {
