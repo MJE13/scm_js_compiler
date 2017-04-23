@@ -7,7 +7,7 @@ let result = ''
 function writeJS(array, funcOrArrContainer) {
 	let isLitArr = false
 	let isFuncArgs = false
-	for (var i=0; i<array.length; i++) {
+	for (let i=0; i<array.length; i++) {
 		if (Array.isArray(array[i])) {
 			if (i === 0) {
 				result += '['
