@@ -1,44 +1,44 @@
-function _scmjs_add() {
+function _schemeAdd() {
 	return Array.prototype.slice.call(arguments).reduce((prev, next) => prev + next)
 }
 
-function _scmjs_subtract() {
+function _schemeSubtract() {
 	return Array.prototype.slice.call(arguments).reduce((prev, next) => prev - next)
 }
 
-function _scmjs_mult() {
+function _schemeMult() {
 	return Array.prototype.slice.call(arguments).reduce((prev, next) => prev * next)
 }
 
-function _scmjs_divide(x, y) {
+function _schemeDivide(x, y) {
 	return x / y
 }
 
-function _scmjs_equals(x, y) {
+function _schemeEquals(x, y) {
 	return x === y
 }
 
-function _scmjs_greater(x, y) {
+function _schemeGreater(x, y) {
 	return x > y
 }
 
-function _scmjs_less(x, y) {
+function _schemeLess(x, y) {
 	return x < y
 }
 
-function _scmjs_greaterOrEqual(x, y) {
+function _schemeGreaterOrEqual(x, y) {
 	return x >= y
 }
 
-function _scmjs_lessOrEqual(x, y) {
+function _schemeLessOrEqual(x, y) {
 	return x <= y
 }
 
-function _scmjs_isNull(x) {
+function _schemeIsNull(x) {
 	return x === null
 }
 
-function _scmjs_if(bool, exp1, exp2) {
+function _schemeIf(bool, exp1, exp2) {
 	if (bool) {
 		return exp1
 	} else {
@@ -46,7 +46,7 @@ function _scmjs_if(bool, exp1, exp2) {
 	}
 }
 
-function _scmjs_cond() {
+function _schemeCond() {
 	let args = Array.prototype.slice.call(arguments)
 	for (let i=0; i< args.length; i++) {
 		if (args[i] === true) return args[i+1]
@@ -59,25 +59,25 @@ function _scmjs_cond() {
 	}
 }
 
-function _scmjs_else(arg) {
+function _schemeElse(arg) {
 	return [true, arg]
 }
 
-function _scmjs_car(arr) {
+function _schemeCar(arr) {
 	return arr[0]
 }
 
-function _scmjs_cdr(arr) {
+function _schemeCdr(arr) {
 	arr.shift()
 	return arr
 }
 
-function _scmjs_cons(add, list) {
+function _schemeCons(add, list) {
 	list.unshift(add)
 	return list
 }
 
-function _scmjs_and() {
+function _schemeAnd() {
 	let args = Array.prototype.slice.call(arguments)
 	if (args.length === 0) return true
 	if (args.length === 1) return args[0]
@@ -92,7 +92,7 @@ function _scmjs_and() {
 	return args[i-1]
 }
 
-function _scmjs_or() {
+function _schemeOr() {
 	let args = Array.prototype.slice.call(arguments)
 	if (args.length === 0) return false
 	for (let i=0; i<args.length; i++) {
@@ -101,10 +101,10 @@ function _scmjs_or() {
 	return false
 }
 
-function _scmjs_set(varname, val) {
+function _schemeSet(varname, val) {
 	return `${varname} = ${val};`
 }
 
 
 // END LIBRARY
-replaceLetStr
+(()=>{ let _schemeglobalScope = 0; return function (x){ return _schemeCond([_schemeEquals(4, 5), 50], [_schemeGreater(900, 20), x]); }; })(); 

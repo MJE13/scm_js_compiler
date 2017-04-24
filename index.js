@@ -7,7 +7,7 @@ let result = ''
 function writeJS(array, funcOrArrContainer) {
 	let isLitArr = false
 	let isFuncArgs = false
-	let isLetArg = false
+	let isLetLambArg = false
 	for (let i=0; i<array.length; i++) {
 		debugger;
 		if (Array.isArray(array[i])) {
@@ -16,7 +16,7 @@ function writeJS(array, funcOrArrContainer) {
 				isLitArr = true
 			}
 			if (i + 1 === array.length) {
-				if (isLetArg) {
+				if (isLetLambArg) {
 					result += 'return '
 				}
 			}
@@ -34,92 +34,92 @@ function writeJS(array, funcOrArrContainer) {
 		} else {
 			switch (array[i]) {
 				case '+':
-					result += '_scmjs_add('
+					result += '_schemeAdd('
 					isFuncArgs = true
 					break
 				case '-':
-					result += '_scmjs_subtract('
+					result += '_schemeSubtract('
 					isFuncArgs = true
 					break
 				case '*':
-					result += '_scmjs_mult('
+					result += '_schemeMult('
 					isFuncArgs = true
 					break
 				case '/':
-					result += '_scmjs_divide('
+					result += '_schemeDivide('
 					isFuncArgs = true
 					break
 				case '=':
-					result += '_scmjs_equals('
+					result += '_schemeEquals('
 					isFuncArgs = true
 					break
 				case 'eq?':
-					result += '_scmjs_equals('
+					result += '_schemeEquals('
 					isFuncArgs = true
 					break
 				case '>':
-					result += '_scmjs_greater('
+					result += '_schemeGreater('
 					isFuncArgs = true
 					break
 				case '<':
-					result += '_scmjs_less('
+					result += '_schemeLess('
 					isFuncArgs = true
 					break
 				case '>=':
-					result += '_scmjs_greaterOrEqual('
+					result += '_schemeGreaterOrEqual('
 					isFuncArgs = true
 					break
 				case '<=':
-					result += '_scmjs_lessOrEqual('
+					result += '_schemeLessOrEqual('
 					isFuncArgs = true
 					break
 				case 'null?':
-					result += '_scmjs_isNull('
+					result += '_schemeIsNull('
 					isFuncArgs = true
 					break
 				case 'if':
-					result += '_scmjs_if('
+					result += '_schemeIf('
 					isFuncArgs = true
 					break
 				case 'cond':
-					result += '_scmjs_cond('
+					result += '_schemeCond('
 					isFuncArgs = true
 					break
 				case 'else':
-					result += '_scmjs_else('
+					result += '_schemeElse('
 					isFuncArgs = true
 					break
 				case 'car':
-					result += '_scmjs_car('
+					result += '_schemeCar('
 					isFuncArgs = true
 					break
 				case 'cdr':
-					result += '_scmjs_cdr('
+					result += '_schemeCdr('
 					isFuncArgs = true
 					break
 				case 'cons':
-					result += '_scmjs_cons('
+					result += '_schemeCons('
 					isFuncArgs = true
 					break
 				case 'let':
-					result += '_scmjs_let('
-					isLetArg = true
+					result += '_schemeLet('
+					isLetLambArg = true
 					break
 				case 'and':
-					result += '_scmjs_and('
+					result += '_schemeAnd('
 					isFuncArgs = true
 					break
 				case 'or':
-					result += '_scmjs_or('
+					result += '_schemeOr('
 					isFuncArgs = true
 					break
 				case 'set!':
-					result += '_scmjs_set('
+					result += '_schemeSet('
 					isFuncArgs = true
 					break
 				case 'lambda':
 					result += '_schemeLambda('
-					//isFuncArgs = true
+					isLetLambArg = true
 					break
 				/*case 'define':
 					result += 'var '
@@ -131,7 +131,7 @@ function writeJS(array, funcOrArrContainer) {
 						isLitArr = true
 					}
 					if (i + 1 === array.length) {
-						if (isLetArg) {
+						if (isLetLambArg) {
 							result += `return ${array[i]}`
 						} else {
 							result += `${array[i]}`
@@ -179,7 +179,7 @@ function tokenize(arr) {
 }
 
 function makeTree(str) {
-	str = '(let ((_scmjs_globalScope 0)) ' + str + ')'
+	str = '(let ((_schemeglobalScope 0)) ' + str + ')'
 	str = str.replace(/".*?"/g, match => match.replace(/ /g, '#$%&!?@'))
 	str = str.replace(/"/g, '@?&@%&!')
 	str = str.replace(/\(|'\(/g, '",["')
@@ -222,8 +222,7 @@ function replaceLetStr(match, inner) {
 	return inner
 }
 
-let cpArgs = { numToParen: null, innerRegEx: null, replaceStr: null, outerRegEx: null }
-
+let cpArgs = { numToParen: null, innerRegEx: null, replaceStr: null, outerRegEx: null, endChars: null }
 function countParens() {
 	let args = Array.prototype.slice.call(arguments)
 	match = args[0]
@@ -239,7 +238,7 @@ function countParens() {
 			parCount--
 		}
 		if (parCount === 0) {
-			match[i] = '})()'
+			match[i] = cpArgs.endChars
 			break
 		}
 	}
@@ -258,14 +257,16 @@ function compile(str) {
 	result = result.replace(/, $/, '')
 
 	cpArgs.numToParen = 10
-	cpArgs.innerRegEx = /_scmjs_let\(\[(.*)$/
-	cpArgs.replaceStr = 'replaceLetStr'
-	cpArgs.outerRegEx = /_scmjs_let.*$/
+	cpArgs.innerRegEx = /_schemeLet\(\[(.*)$/
+	cpArgs.replaceStr = replaceLetStr
+	cpArgs.endChars = '})()'
+	cpArgs.outerRegEx = /_schemeLet.*$/
 	result = result.replace(cpArgs.outerRegEx, countParens)
 
-	cpArgs.numToParen = 12
-	cpArgs.innerRegEx = /_schemeLambda\(\[(.*)$/
-	cpArgs.replaceStr = 'function() {'
+	cpArgs.numToParen = 13
+	cpArgs.innerRegEx = /_schemeLambda\(\[(.*?)\],/
+	cpArgs.replaceStr = 'function ($1){'
+	cpArgs.endChars = '}'
 	cpArgs.outerRegEx = /_schemeLambda.*$/
 	result = result.replace(cpArgs.outerRegEx, countParens)
 
