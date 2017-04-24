@@ -107,4 +107,4 @@ function _schemeSet(varname, val) {
 
 
 // END LIBRARY
-(()=>{ let _schemeglobalScope = 0; return function (x){ return _schemeCond([_schemeEquals(4, 5), 50], [_schemeGreater(900, 20), x]); }; })(); 
+(()=>{ let _topLevelScope = 0; return (x)=>{ return _schemeCond([_schemeEquals(4, 5), 50], [_schemeLessOrEqual(523, 87), _schemeSubtract(x, 67)], [_schemeGreater(900, 20), x]); }; })(); 
