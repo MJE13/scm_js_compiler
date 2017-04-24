@@ -89,8 +89,17 @@ function symbols(arrElement, isFuncArg, isLetLambArg) {
 			result += '_schemeLet('
 			isLetLambArg = true
 			break
+		case 'define':
+			result += '_schemeDefine('
+			isFuncArg = true
+			break
 		case 'lambda':
 			result += '_schemeLambda('
+			isLetLambArg = true
+			break
+		case 'autoLambda':
+			result += '_schemeAutoLambda('
+			isFuncArg = true
 			isLetLambArg = true
 			break
 		default:

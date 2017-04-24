@@ -27,7 +27,6 @@ function makeTree(str) {
 	str = morphStr.preProcessStr(str)
 
 	let arr = JSON.parse(str)
-	arr = arr[0]
 	arr = tokenize(arr)
 
 	return arr

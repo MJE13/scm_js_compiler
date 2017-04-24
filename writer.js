@@ -8,6 +8,7 @@ function addArrayElement(arrElement, i, container, arrLength, funcContainerNotic
 		container.isLitArr = true
 	}
 	if (i + 1 === arrLength) {
+		debugger;
 		if (container.isLetLambArg) {
 			result += 'return '
 		}
@@ -40,6 +41,7 @@ function addTokenElement(arrElement_0, currentArrElement, i, container, arrLengt
 	}
 
 	if (i + 1 === arrLength) {
+		debugger;
 		if (container.isLetLambArg) {
 			result += `return ${currentArrElement}`
 		} else {

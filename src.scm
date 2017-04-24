@@ -1,7 +1,4 @@
-(lambda (x)
-	(cond
-		((= 4 5) 50)
-		((<= 523 87) (- x 67))
-		((> 900 20) x)
-	)
-)
+(define tartar (lambda (x)
+	(+ x 2)))
+
+	
