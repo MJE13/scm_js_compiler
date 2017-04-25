@@ -107,4 +107,4 @@ function _schemeSet(varname, val) {
 
 
 // END LIBRARY
-(()=>{ let _topLevelScope = 0; return let doubleIt =  (x)=>{ return _schemeMult(x, 2); }; })(); 
+(()=>{ let _topLevelScope = 0; let doubleIt =  (x)=>{ return _schemeMult(x, 2); }; return [doubleIt, 7]})(); 

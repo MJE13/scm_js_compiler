@@ -16,7 +16,6 @@ console.log(jsSourceCode)
 const fdx = fs.openSync('library.js', 'r')
 let lib = fs.readFileSync(fdx, 'utf8')
 let final = lib + jsSourceCode
-
 fs.closeSync(fdx)
 
 const fd = fs.openSync('src.js', 'w')

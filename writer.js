@@ -1,4 +1,4 @@
-const symbols = require('./symbol_table')
+const symbolTables = require('./symbol_table')
 
 function addArrayElement(arrElement, i, container, arrLength, funcContainerNotice) {
 	let result = ''
@@ -8,7 +8,7 @@ function addArrayElement(arrElement, i, container, arrLength, funcContainerNotic
 		container.isLitArr = true
 	}
 	if (i + 1 === arrLength) {
-		if (container.isLetLambArg) {
+		if (container.isLetLambArg && arrElement[0] !== 'define') {
 			result += 'return '
 		}
 	}
@@ -82,7 +82,7 @@ function writeJS(array, funcContainerNotice) {
 			result += helperResult.result
 			container.isLitArr = helperResult.isLitArr
 		} else {
-			helperResult = symbols(array[i], container.isFuncArg, container.isLetLambArg)
+			helperResult = symbolTables.symbols(array[i], container.isFuncArg, container.isLetLambArg)
 			result += helperResult.result
 			container.isFuncArg = helperResult.isFuncArg
 			container.isLetLambArg = helperResult.isLetLambArg

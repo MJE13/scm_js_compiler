@@ -1,4 +1,5 @@
 
+let userSymbols = {}
 
 function symbols(arrElement, isFuncArg, isLetLambArg) {
 	let result = ''
@@ -114,4 +115,7 @@ function symbols(arrElement, isFuncArg, isLetLambArg) {
 	}
 }
 
-module.exports = symbols
+module.exports = {
+	symbols,
+	userSymbols
+}
