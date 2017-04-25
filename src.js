@@ -38,12 +38,21 @@ function _schemeIsNull(x) {
 	return x === null
 }
 
+function _schemePair(expr) {
+	if (Array.isArray(expr) && expr.length === 2) return true
+	return false
+}
+
 function _schemeIf(bool, exp1, exp2) {
 	if (bool) {
 		return exp1
 	} else {
 		return exp2
 	}
+}
+
+function _schemeNot(arg) {
+	return (arg) ? false : true;
 }
 
 function _schemeCond() {
@@ -107,4 +116,4 @@ function _schemeSet(varname, val) {
 
 
 // END LIBRARY
-(()=>{ let _topLevelScope = 0; let doubleIt =  (x)=>{ return _schemeMult(x, 2); }; return [doubleIt, 7]})(); 
+(()=>{ let _topLevelScope = 0; return _schemeCond([_schemeIsNull(8); 1], [_schemeEquals(5, 4); 2], _schemeElse(3)); })(); 

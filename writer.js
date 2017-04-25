@@ -1,6 +1,6 @@
 const symbolTables = require('./symbol_table')
 
-function addArrayElement(arrElement, i, container, arrLength, funcContainerNotice) {
+function addArrayElement(currentArrElement, arrElement_0, i, container, arrLength, funcContainerNotice) {
 	let result = ''
 
 	if (i === 0) {
@@ -8,16 +8,20 @@ function addArrayElement(arrElement, i, container, arrLength, funcContainerNotic
 		container.isLitArr = true
 	}
 	if (i + 1 === arrLength) {
-		if (container.isLetLambArg && arrElement[0] !== 'define') {
+		if (container.isLetLambArg && currentArrElement[0] !== 'define') {
 			result += 'return '
 		}
 	}
 
-	result += writeJS(arrElement, container.isFuncArg || container.isLitArr)
+	result += writeJS(currentArrElement, container.isFuncArg)
 
 	if (i + 1 === arrLength) {
 		if (container.isLitArr) {
-			result += '], '
+			if (symbolTables.userSymbols[arrElement_0]) {
+				result += ']; '
+			} else {
+				result += '], '
+			}
 		} else if (funcContainerNotice) {
 			result += '), '
 		} else {
@@ -34,19 +38,32 @@ function addArrayElement(arrElement, i, container, arrLength, funcContainerNotic
 function addTokenElement(arrElement_0, currentArrElement, i, container, arrLength, funcContainerNotice) {
 	let result = ''
 
+	if (symbolTables.userSymbols[currentArrElement]) {
+		currentArrElement = currentArrElement.replace(/\?$/, '')
+	}
+
 	if (i === 0) {
 		result += '['
+		if (symbolTables.userSymbols[arrElement_0]) {
+			result += '36ldv9nw6f5s15'
+			container.isFuncArg = true
+		}
 		container.isLitArr = true
 	}
 
 	if (i + 1 === arrLength) {
+		console.log('concheck', container, currentArrElement)
 		if (container.isLetLambArg) {
 			result += `return ${currentArrElement}`
 		} else {
 			result += `${currentArrElement}`
 		}
 		if (container.isLitArr) {
-			result += '], '
+			if (symbolTables.userSymbols[arrElement_0]) {
+				result += ']; '
+			} else {
+				result += '], '
+			}
 		} else if (funcContainerNotice) {
 			result += '), '
 		} else {
@@ -78,7 +95,7 @@ function writeJS(array, funcContainerNotice) {
 
 	for (let i=0; i<array.length; i++) {
 		if (Array.isArray(array[i])) {
-			helperResult = addArrayElement(array[i], i, container, array.length, funcContainerNotice)
+			helperResult = addArrayElement(array[i], array[0], i, container, array.length, funcContainerNotice)
 			result += helperResult.result
 			container.isLitArr = helperResult.isLitArr
 		} else {
@@ -88,10 +105,15 @@ function writeJS(array, funcContainerNotice) {
 			container.isLetLambArg = helperResult.isLetLambArg
 			container.noSymbolMatch = helperResult.noSymbolMatch
 
+			if (helperResult.result === '_schemeDefine(') {
+				symbolTables.userSymbols[array[i+1]] = true
+			}
+
 			if (container.noSymbolMatch) {
 				helperResult = addTokenElement(array[0], array[i], i, container, array.length, funcContainerNotice)
 				result += helperResult.result
 				container.isLitArr = helperResult.isLitArr
+				container.isFuncArg = helperResult.isFuncArg
 			}
 		}
 	}

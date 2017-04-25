@@ -30,6 +30,10 @@ function symbols(arrElement, isFuncArg, isLetLambArg) {
 			result += '_schemeEquals('
 			isFuncArg = true
 			break
+		case 'pair?':
+			result += '_schemePair('
+			isFuncArg = true
+			break
 		case '>':
 			result += '_schemeGreater('
 			isFuncArg = true
@@ -52,6 +56,10 @@ function symbols(arrElement, isFuncArg, isLetLambArg) {
 			break
 		case 'if':
 			result += '_schemeIf('
+			isFuncArg = true
+			break
+		case 'not':
+			result += '_schemeNot('
 			isFuncArg = true
 			break
 		case 'cond':

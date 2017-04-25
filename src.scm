@@ -1,7 +1,5 @@
-(define doubleIt
-	(lambda (x)
-		(* x 2)
-	)
+(cond
+	((null? 8) 1)
+	((= 5 4) 2)
+	(else 3)
 )
-
-(doubleIt 7)

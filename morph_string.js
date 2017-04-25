@@ -41,6 +41,14 @@ function replaceLetStr(match, inner) {
 	return inner
 }
 
+function replaceLambdaArgs(match, inner) {
+
+
+	inner = '(' + inner + ')=>{'
+
+	return inner
+}
+
 function autoLambdaParser(match) {
 	let bracketCount = 0
 	let i
@@ -122,7 +130,7 @@ function postProcessStr(result) {
 	cpArgs.numToParen = 13
 	cpArgs.innerRegEx = /_schemeLambda\(\[(.*?)\],/
 	cpArgs.searchChars = { begin: '(', end: ')'}
-	cpArgs.replaceStr = '($1)=>{'
+	cpArgs.replaceStr = (match, inner) => (	`(${inner})=>{` )
 	cpArgs.endChars = '}'
 	cpArgs.outerRegEx = /_schemeLambda.*$/
 	result = result.replace(cpArgs.outerRegEx, countParens)
@@ -137,9 +145,17 @@ function postProcessStr(result) {
 	cpArgs.numToParen = 13
 	cpArgs.innerRegEx = /_schemeDefine\((.*?),/
 	cpArgs.searchChars = { begin: '(', end: ')'}
-	cpArgs.replaceStr = 'let $1 = '
+	cpArgs.replaceStr = 'let $1 ='
 	cpArgs.endChars = ''
 	cpArgs.outerRegEx = /_schemeDefine.*$/
+	result = result.replace(cpArgs.outerRegEx, countParens)
+
+	cpArgs.numToParen = 0
+	cpArgs.innerRegEx = /\[36ldv9nw6f5s15(.*?), /
+	cpArgs.searchChars = { begin: '[', end: ']'}
+	cpArgs.replaceStr = '$1('
+	cpArgs.endChars = ')'
+	cpArgs.outerRegEx = /\[36ldv9nw6f5s15.*$/
 	result = result.replace(cpArgs.outerRegEx, countParens)
 
 	result = result.replace(/#t/g, 'true')

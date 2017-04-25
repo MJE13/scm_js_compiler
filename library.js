@@ -35,7 +35,12 @@ function _schemeLessOrEqual(x, y) {
 }
 
 function _schemeIsNull(x) {
-	return x === null
+	return Array.isArray(x) && x.length === 0
+}
+
+function _schemePair(expr) {
+	if (Array.isArray(expr) && expr.length === 2) return true
+	return false
 }
 
 function _schemeIf(bool, exp1, exp2) {
@@ -44,6 +49,10 @@ function _schemeIf(bool, exp1, exp2) {
 	} else {
 		return exp2
 	}
+}
+
+function _schemeNot(arg) {
+	return (arg) ? false : true;
 }
 
 function _schemeCond() {
