@@ -1,4 +1,5 @@
-(define tartar (lambda (x)
-	(+ x 2)))
-
-	
+(define doubleIt
+	(lambda (x)
+		(* x 2)
+	)
+)

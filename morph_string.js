@@ -84,7 +84,6 @@ let cpArgs = {
 	}
 }
 function countParens(match) {
-
 	match = match.split('')
 
 	let parCount = 0
@@ -95,11 +94,11 @@ function countParens(match) {
 			parCount--
 		}
 		if (parCount === 0) {
-
 			match[i] = cpArgs.endChars
 			break
 		}
 	}
+
 	match = match.join('')
 	match = match.replace(cpArgs.innerRegEx, cpArgs.replaceStr)
 	match = match.replace(cpArgs.outerRegEx, countParens)
@@ -131,10 +130,17 @@ function postProcessStr(result) {
 	cpArgs.numToParen = 0
 	cpArgs.innerRegEx = /\[_schemeAutoLambda\(\[(.*?)\],/
 	cpArgs.searchChars = { begin: '[', end: ']'}
-	cpArgs.replaceStr = '(($1)=>{'
 	cpArgs.endChars = '})()'
 	cpArgs.outerRegEx = /\[_schemeAutoLambda.*$/
 	result = result.replace(cpArgs.outerRegEx, autoLambdaParser)
+
+	cpArgs.numToParen = 13
+	cpArgs.innerRegEx = /_schemeDefine\((.*?),/
+	cpArgs.searchChars = { begin: '(', end: ')'}
+	cpArgs.replaceStr = 'let $1 = '
+	cpArgs.endChars = ''
+	cpArgs.outerRegEx = /_schemeDefine.*$/
+	result = result.replace(cpArgs.outerRegEx, countParens)
 
 	result = result.replace(/#t/g, 'true')
 	result = result.replace(/#f/g, 'false')
