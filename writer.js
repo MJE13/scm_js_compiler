@@ -13,12 +13,17 @@ function addArrayElement(currentArrElement, arrElement_0, i, container, arrLengt
 		}
 	}
 
-	result += writeJS(currentArrElement, container.isFuncArg)
+	result += writeJS(currentArrElement, container.isFuncArg || container.isLitArr)
 
 	if (i + 1 === arrLength) {
 		if (container.isLitArr) {
 			if (symbolTables.userSymbols[arrElement_0]) {
-				result += ']; '
+				if (funcContainerNotice) {
+					result += '], '
+				}
+				else {
+					result += ']; '
+				}
 			} else {
 				result += '], '
 			}
@@ -37,22 +42,24 @@ function addArrayElement(currentArrElement, arrElement_0, i, container, arrLengt
 
 function addTokenElement(arrElement_0, currentArrElement, i, container, arrLength, funcContainerNotice) {
 	let result = ''
-
-	if (symbolTables.userSymbols[currentArrElement]) {
+	debugger;
+	if (symbolTables.userSymbols[currentArrElement] === true) {
+		debugger;
 		currentArrElement = currentArrElement.replace(/\?$/, '')
+		if (funcContainerNotice) {
+			container.isFuncArg = true
+		}
 	}
 
 	if (i === 0) {
 		result += '['
 		if (symbolTables.userSymbols[arrElement_0]) {
 			result += '36ldv9nw6f5s15'
-			container.isFuncArg = true
 		}
 		container.isLitArr = true
 	}
 
 	if (i + 1 === arrLength) {
-		console.log('concheck', container, currentArrElement)
 		if (container.isLetLambArg) {
 			result += `return ${currentArrElement}`
 		} else {
@@ -60,7 +67,12 @@ function addTokenElement(arrElement_0, currentArrElement, i, container, arrLengt
 		}
 		if (container.isLitArr) {
 			if (symbolTables.userSymbols[arrElement_0]) {
-				result += ']; '
+				if (funcContainerNotice) {
+					result += '], '
+				}
+				else {
+					result += ']; '
+				}
 			} else {
 				result += '], '
 			}
@@ -79,7 +91,8 @@ function addTokenElement(arrElement_0, currentArrElement, i, container, arrLengt
 
 	return {
 		result: result,
-		isLitArr: container.isLitArr
+		isLitArr: container.isLitArr,
+		isFuncArg: container.isFuncArg
 	}
 }
 

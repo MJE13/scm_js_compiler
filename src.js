@@ -35,7 +35,7 @@ function _schemeLessOrEqual(x, y) {
 }
 
 function _schemeIsNull(x) {
-	return x === null
+	return Array.isArray(x) && x.length === 0
 }
 
 function _schemePair(expr) {
@@ -116,4 +116,4 @@ function _schemeSet(varname, val) {
 
 
 // END LIBRARY
-(()=>{ let _topLevelScope = 0; return _schemeCond([_schemeIsNull(8); 1], [_schemeEquals(5, 4); 2], _schemeElse(3)); })(); 
+(()=>{ debugger; let _topLevelScope = 0; let basicRec = (x)=>{ return _schemeIf(_schemeEquals(0, x), "done", basicRec(_schemeSubtract(x, 1))); }; return basicRec(10); })(); 

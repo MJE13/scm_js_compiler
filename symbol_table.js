@@ -9,6 +9,7 @@ function symbols(arrElement, isFuncArg, isLetLambArg) {
 		case '+':
 			result += '_schemeAdd('
 			isFuncArg = true
+			debugger;
 			break
 		case '-':
 			result += '_schemeSubtract('
