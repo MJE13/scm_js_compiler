@@ -1,6 +1,6 @@
 (define basicRec
 	(lambda (x)
-		(if (= 0 x) "done" (basicRec (- x 1)))
+		(if (= x 0) "done" (basicRec (- x 1)))
 	)
 )
 

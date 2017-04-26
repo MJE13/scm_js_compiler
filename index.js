@@ -4,7 +4,7 @@ const morphStr = require('./morph_string')
 const makeTree = require('./token_tree')
 
 const schemeSourceCode = fs.readFileSync('src.scm', 'utf8')
-
+debugger;
 function compile(str) {
 	let result = writeJS(makeTree(str), false)
 	return morphStr.postProcessStr(result)

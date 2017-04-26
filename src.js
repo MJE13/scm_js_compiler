@@ -116,4 +116,16 @@ function _schemeSet(varname, val) {
 
 
 // END LIBRARY
-(()=>{ debugger; let _topLevelScope = 0; let basicRec = (x)=>{ return _schemeIf(_schemeEquals(0, x), "done", basicRec(_schemeSubtract(x, 1))); }; return basicRec(10); })(); 
+let basicRec = (x) => {
+	//if(x === 0) return 'done';
+	let recResult = basicRec(_schemeSubtract(x, 1))
+	if(recResult === "done") return 'let me out!!'
+	console.log('recResult?', recResult)
+	return _schemeIf(
+		_schemeEquals(x, 0),
+		"done",
+		recResult
+	);
+};
+
+basicRec(2)
