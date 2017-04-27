@@ -1,9 +1,10 @@
-(define member?
+(define rember
   (lambda (a lat)
     (cond
-      ((null? lat)#f)
-      (else (or (eq? (car lat) a) (member? a (cdr lat))))
+        ((null? lat) ())
+        ((eq? (car lat) a) (cdr lat))
+        (else (cons (car lat) (rember a (cdr lat)))
 
-				)))
+		))))
 
-(member? 4 (1 2 3))
+					(rember '5 '(4 6 8 10 12))

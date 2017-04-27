@@ -42,9 +42,8 @@ function addArrayElement(currentArrElement, arrElement_0, i, container, arrLengt
 
 function addTokenElement(arrElement_0, currentArrElement, i, container, arrLength, funcContainerNotice) {
 	let result = ''
-	debugger;
+
 	if (symbolTables.userSymbols[currentArrElement] === true) {
-		debugger;
 		currentArrElement = currentArrElement.replace(/\?$/, '')
 		if (funcContainerNotice) {
 			container.isFuncArg = true

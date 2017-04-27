@@ -15,7 +15,6 @@ function _schemeDivide(x, y) {
 }
 
 function _schemeEquals(x, y) {
-	console.log('EQUAL REALLY?', x, y)
 	return x === y
 }
 
@@ -36,7 +35,6 @@ function _schemeLessOrEqual(x, y) {
 }
 
 function _schemeIsNull(x) {
-	console.log('NULL', x, Array.isArray(x) && x.length === 0)
 	return Array.isArray(x) && x.length === 0
 }
 
@@ -47,13 +45,15 @@ function _schemePair(expr) {
 
 function _schemeIf(bool, exp1, exp2) {
 	if (bool) {
-		if (Array.isArray(exp1)) {
-			return exp1[0](exp1[1])
+		if (Array.isArray(exp1) && typeof exp1[0] === 'function') {
+			let func = exp1.shift()
+			return func.apply(this, exp1)
 		}
 		return exp1
 	} else {
-		if (Array.isArray(exp2)) {
-			return exp2[0](exp2[1])
+		if (Array.isArray(exp2) && typeof exp2[0] === 'function') {
+			let func = exp2.shift()
+			return func.apply(this, exp2)
 		}
 		return exp2
 	}
@@ -67,31 +67,30 @@ function _schemeCond() {
 	let args = Array.prototype.slice.call(arguments)
 	for (let i=0; i< args.length; i++) {
 		if (args[i] === true) {
-			console.log('in first cond', args[i])
-			if (Array.isArray(args[i+1][1])) {
-				return args[i+1][0](args[i+1][1])
+			if (Array.isArray(args[i+1][1]) && typeof args[i+1][1][0] === 'function') {
+				let func = args[i+1][0].shift()
+				return func.apply(this, args[i+1][0])
 			} else {
 				return args[i+1]
 			}
 
 		}
 		if (args[i] === false) {
-			console.log('in second cond', args[i])
 			i++
 			continue
 		}
 		if (args[i].length === 1) {
-			console.log('in third cond', args[i])
-			if (Array.isArray(args[i][1])) {
-				return args[i][0](args[i][1])
+			if (Array.isArray(args[i][0]) && typeof args[i][0][0] === 'function') {
+				let func = args[i][0].shift()
+				return func.apply(this, args[i][0])
 			} else {
 				return args[i][0]
 			}
 		}
 		if (args[i][0]) {
-			console.log('in fourth cond', args[i])
-			if (Array.isArray(args[i][1])) {
-				return args[i][1][0](args[i][1][1])
+			if (Array.isArray(args[i][1]) && typeof args[i][1][0] === 'function') {
+				let func = args[i][1].shift()
+				return func.apply(this, args[i][1])
 			} else {
 				return args[i][1]
 			}
@@ -100,11 +99,13 @@ function _schemeCond() {
 }
 
 function _schemeElse(arg) {
+	if (Array.isArray(arg) && typeof arg[0] === 'function') {
+		return [true, arg[0](arg[1])]
+	}
 	return [true, arg]
 }
 
 function _schemeCar(arr) {
-	console.log('car trouble', arr)
 	if (arr === undefined) return false
 	return arr[0]
 }
@@ -122,7 +123,13 @@ function _schemeCons(add, list) {
 function _schemeAnd() {
 	let args = Array.prototype.slice.call(arguments)
 	if (args.length === 0) return true
-	if (args.length === 1) return args[0]
+	if (args.length === 1) {
+		if (Array.isArray(args[0]) && typeof args[0][0] === 'function') {
+			let func = args[0].shift()
+			return func.apply(this, args[0])
+		}
+		return args[0]
+	}
 	let i
 	for (i=0; i<args.length; i++) {
 		if (args[i] !== false) {
@@ -131,6 +138,10 @@ function _schemeAnd() {
 			return false
 		}
 	}
+	if (Array.isArray(args[i-1]) && typeof args[i-1][0] === 'function') {
+		let func = args[i-1].shift()
+		return func.apply(this, args[i-1])
+	}
 	return args[i-1]
 }
 
@@ -138,8 +149,9 @@ function _schemeOr() {
 	let args = Array.prototype.slice.call(arguments)
 	if (args.length === 0) return false
 	for (let i=0; i<args.length; i++) {
-		if (Array.isArray(args[i])) {
-			return args[i][0](args[i][1], args[i][2])
+		if (Array.isArray(args[i]) && typeof args[i][0] === 'function') {
+			let func = args[i][0].shift
+			return func.apply(this, args[i][0])
 		}
 		if (args[i] !== false) return args[i]
 	}

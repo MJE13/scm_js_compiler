@@ -126,21 +126,12 @@ function countParens(match) {
 				let ifReg = new RegExp(therex)
 				let ifStr = theSub.match(ifReg)[0]
 
-				//let killRecursion = ifStr.replace(/\[36ldv9nw6f5s15.*$/, "'');")
-
 				let killRecursion = theSub.replace(/36ldv9nw6f5s15/, '')
-				console.log('killRecursion', killRecursion)
-				/*killRecursion = killRecursion.replace(/_schemeIf/, 'if')
-				killRecursion = killRecursion.replace(/\),/, ')){ return ')
-				killRecursion = killRecursion.replace(/, ''\)/, '}')*/
 
 				match = match.replace(/_schemeDefine(.*?)}/, killRecursion)
-				console.log('??????????', match)
 			} else if (/_schemeCond/.test(match)) {
-				console.log('cond vars', theSub, subMatch)
 				let condRex = new RegExp('36ldv9nw6f5s15' + subMatch)
 				let killCondRecursion = theSub.replace(condRex, subMatch)
-				console.log('KILLCONDRECURSION', killCondRecursion)
 				match = match.replace(/_schemeDefine(.*?)}/, killCondRecursion)
 
 			}
