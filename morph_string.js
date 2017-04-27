@@ -18,6 +18,10 @@ function preProcessStr(str) {
 	return str
 }
 
+function findRecursion() {
+
+}
+
 function replaceLetStr(match, inner) {
 	let bracketCount = 0
 	let i
@@ -91,11 +95,13 @@ let cpArgs = {
 		end: null
 	}
 }
+
 function countParens(match) {
 	match = match.split('')
-
+	let i
 	let parCount = 0
-	for (let i=cpArgs.numToParen; i<match.length; i++) {
+
+	for (i=cpArgs.numToParen; i<match.length; i++) {
 		if (match[i] === cpArgs.searchChars.begin) {
 			parCount++
 		} else if (match[i] === cpArgs.searchChars.end) {
@@ -108,9 +114,40 @@ function countParens(match) {
 	}
 
 	match = match.join('')
+
+	if(/^_schemeDefine/.test(match)) {
+		let theSub = match.substring(0, i)
+		let subMatch = theSub.match(/_schemeDefine\((.*?),/)[1]
+		let recCall = theSub.match(new RegExp(subMatch, 'g'))
+		let matchCount = recCall.length
+		if (matchCount > 1) {
+			if(/_schemeIf/.test(match)) {
+				let therex = '_schemeIf.*?' + subMatch
+				let ifReg = new RegExp(therex)
+				let ifStr = theSub.match(ifReg)[0]
+
+				//let killRecursion = ifStr.replace(/\[36ldv9nw6f5s15.*$/, "'');")
+
+				let killRecursion = theSub.replace(/36ldv9nw6f5s15/, '')
+				console.log('killRecursion', killRecursion)
+				/*killRecursion = killRecursion.replace(/_schemeIf/, 'if')
+				killRecursion = killRecursion.replace(/\),/, ')){ return ')
+				killRecursion = killRecursion.replace(/, ''\)/, '}')*/
+
+				match = match.replace(/_schemeDefine(.*?)}/, killRecursion)
+				console.log('??????????', match)
+			} else if (/_schemeCond/.test(match)) {
+				console.log('cond vars', theSub, subMatch)
+				let condRex = new RegExp('36ldv9nw6f5s15' + subMatch)
+				let killCondRecursion = theSub.replace(condRex, subMatch)
+				console.log('KILLCONDRECURSION', killCondRecursion)
+				match = match.replace(/_schemeDefine(.*?)}/, killCondRecursion)
+
+			}
+		}
+	}
 	match = match.replace(cpArgs.innerRegEx, cpArgs.replaceStr)
 	match = match.replace(cpArgs.outerRegEx, countParens)
-
 	return match
 }
 
@@ -145,6 +182,7 @@ function postProcessStr(result) {
 	cpArgs.numToParen = 13
 	cpArgs.innerRegEx = /_schemeDefine\((.*?),/
 	cpArgs.searchChars = { begin: '(', end: ')'}
+	//cpArgs.replaceStr = findRecursion
 	cpArgs.replaceStr = 'let $1 ='
 	cpArgs.endChars = ''
 	cpArgs.outerRegEx = /_schemeDefine.*$/
