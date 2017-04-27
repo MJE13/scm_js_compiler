@@ -111,11 +111,16 @@ function _schemeCar(arr) {
 }
 
 function _schemeCdr(arr) {
+	if(arr.length === 0) return []
 	arr.shift()
 	return arr
 }
 
 function _schemeCons(add, list) {
+	if (Array.isArray(list) && typeof list[0] === 'function') {
+		let func = list.shift()
+		return func.apply(this, list)
+	}
 	list.unshift(add)
 	return list
 }

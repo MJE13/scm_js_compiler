@@ -5,14 +5,12 @@ const makeTree = require('./token_tree')
 
 const schemeSourceCode = fs.readFileSync('src.scm', 'utf8')
 
-
 function compile(str) {
 	let result = writeJS(makeTree(str), false)
 	return morphStr.postProcessStr(result)
 }
 
 const jsSourceCode = compile(schemeSourceCode)
-console.log(jsSourceCode)
 
 const fdx = fs.openSync('library.js', 'r')
 let lib = fs.readFileSync(fdx, 'utf8')

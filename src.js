@@ -111,11 +111,16 @@ function _schemeCar(arr) {
 }
 
 function _schemeCdr(arr) {
+	if(arr.length === 0) return []
 	arr.shift()
 	return arr
 }
 
 function _schemeCons(add, list) {
+	if (Array.isArray(list) && typeof list[0] === 'function') {
+		let func = list.shift()
+		return func.apply(this, list)
+	}
 	list.unshift(add)
 	return list
 }
@@ -164,4 +169,4 @@ function _schemeSet(varname, val) {
 
 
 // END LIBRARY
-(()=>{ let _topLevelScope = 0; let rember = (a, lat)=>{ return _schemeCond([_schemeIsNull(lat), []], [_schemeEquals(_schemeCar(lat), a), _schemeCdr(lat)], _schemeElse(_schemeCons(_schemeCar(lat), [rember, a, _schemeCdr(lat)]))); }; return rember(5, [4, 6, 8, 10, 12]); })(); 
+(()=>{ let _topLevelScope = 0; let member = (a, lat)=>{ return _schemeCond([_schemeIsNull(lat), false], [_schemeEquals(_schemeCar(lat), a), true], [true, [member, a, _schemeCdr(lat)]]); }; return member(3, [1, 2, 3]); })(); 

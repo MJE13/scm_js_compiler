@@ -18,10 +18,6 @@ function preProcessStr(str) {
 	return str
 }
 
-function findRecursion() {
-
-}
-
 function replaceLetStr(match, inner) {
 	let bracketCount = 0
 	let i
